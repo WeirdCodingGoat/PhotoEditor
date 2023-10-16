@@ -1,0 +1,52 @@
+<QuizManager>:
+    Question2Screen:
+        name: "question2"
+    CorrectScreen:
+        name: "correct"
+    WrongScreen:
+        name: "wrong"
+
+<Question2Screen>:
+    BoxLayout:
+        orientation:"vertical"
+        spacing: 5
+        Label:
+            text: "Gimme a photo file. (debug: 2012)"
+        BoxLayout:
+            size_hint: 1, 6
+            orientation: "vertical"
+            TextInput:
+                id: answer
+                size_hint: 0.5, 0.1
+                pos_hint: {"center_y": .5}
+                pos_hint: {"center_x": .5}
+            Button:
+                pos_hint: {"center_x": .5}
+                size_hint: .5 , .2
+                text: "Enter"
+                on_release: root.answer_question(answer.text)
+            Image:
+                id: image
+                source: root.display_image()
+                size_hint: 1, 1
+
+
+<WrongScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        spacing: "5"
+        Label:
+            text: "WRONG"
+        Button:
+            text: "Skip -->"
+            on_release: root.next()
+
+<CorrectScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        spacing: "5"
+        Label:
+            text: "CORRECT"
+        Button:
+            text: "Next -->"
+            on_release: root.next()
