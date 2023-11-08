@@ -14,13 +14,14 @@
             orientation:"lr-tb"
             cols:2
             TextInput:
-                id: answer
+                id: theimg
                 hint_text: "Gimme a photo file. (debug: 2012)"
             Button:
                 text: "Enter"
-                on_release: root.answer_question(answer.text)
+                on_release: root.answer_question(theimg.text)
             Button:
                 text: "Blue to green"
+                on_release: root.new_image(1,theimg.text)
             Button:
                 text: "Pointillism"
             Button:
