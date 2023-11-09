@@ -20,8 +20,11 @@
                 text: "Enter"
                 on_release: root.answer_question(theimg.text)
             Button:
+                text: "Pixal ruler (10 pixels per mark)"
+                on_release: root.pixal_ruler()
+            Button:
                 text: "Blue to green"
-                on_release: root.new_image(1,theimg.text)
+                on_release: root.bluetogreenimage()
             Button:
                 text: "Pointillism"
             Button:

@@ -22,61 +22,61 @@ class Question2Screen(Screen):
     def load_image(self,name):
         self.ids.image.source = name
         
+        
     def answer_question(self, img): # this is the image text input button handler
         if img == "2012":
             self.manager.current = "correct"
         else:
             self.load_image(img)
-    
-    def new_image(self,func,imgN): # N = name
-        img=Image.open(imgN)
-        new_img=Image.open(imgN)
-        if func == 1:
-            new_img=self.bluetogreenimage(img)
-        else:
-            print("Function out of index",func)
-        self.load_image(self,new_image)
             
             
                     #  IMAGE EDITING FUNCTIONS BELOW vvvvvvv
            
-    def pixal_ruler(self, image):
-        pass # This is to make a seperate image with a pixal ruler on top. (seprate from finnal image)
+    def pixal_ruler(self):
+        imgN=""
+    
+        if "1" in self.ids.image.source:
+            imgN=self.ids.image.source[:-5]+self.ids.image.source[-4:]
+            self.load_image(imgN)
         
-    def bluetogreenimage(self,image):#,name): #Blue to green function
-        pixels = image.load()
+        
+        
+    def bluetogreenimage(self):#,name): #Blue to green function
+        imgN=""
+        # ADD SET UP CODE FOR THE RULER FUNCTION! (if 1 in self.ids.image.source:
+        if "1" in self.ids.image.source:
+            imgN=self.ids.image.source[:-5]+self.ids.image.source[-4:]
+        else:
+            imgN=self.ids.image.source
+        name=imgN[:-4] # MAKE A FUNCTION TO MAKE A NAME FORMAT
+        img=Image.open(imgN)
+        #new_img=Image.open(imgN)
+    
+        pixels = img.load()
         print(type(pixels))
-        width, height = image.size
+        width, height = img.size
         
         print("(",1,2,")","\nWidth:", width, "\nHeight:", height)
-        for i in inspect.getmembers(pixels):
-            # to remove private and protected
-            # functions
-            if not i[0].startswith('_'):
-                 
-                # To remove other methods that
-                # doesnot start with a underscore
-                if not inspect.ismethod(i[1]):
-                    print(i)
                     
-        for y in range(image.size[1]):
-            for x in range(image.size[0]):
+        for y in range(img.size[1]):
+            for x in range(img.size[0]):
 
-
-                if pixels[x,y][2]>=50 and pixels[x,y][0]<100 and pixels[x,y][1]<100:
+                if pixels[x,y][2]>=15 and pixels[x,y][0]<200 and pixels[x,y][1]<200:
                     temp=pixels[x,y][1]
                     red = pixels[x,y][0]
                     green = pixels[x,y][2]
-                    blue = temp
+                    blue = green-temp
                 else:
                     temp=pixels[x,y][1]
                     red = pixels[x,y][0]
                     green = pixels[x,y][1]
                     blue = pixels[x,y][2]
             
-            pixels[x,y] = (int(red), int(green), int(blue))
+                pixels[x,y] = (int(red), int(green), int(blue))
             temp=0
-  #image.save(name+"bluetogreen.png")
+        img.save(name+"btg"+self.ids.image.source[-4:])
+        self.load_image(name+"btg"+self.ids.image.source[-4:])
+        
     def pointillism(image):  # Pointillism function
       pixels = image.load()
       canvas = Image.new("RGB",(image.size[0],image.size[1]), "white")
