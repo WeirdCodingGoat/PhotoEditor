@@ -61,7 +61,7 @@ class Question2Screen(Screen):
         for y in range(img.size[1]):
             for x in range(img.size[0]):
 
-                if pixels[x,y][2]>=15 and pixels[x,y][0]<200 and pixels[x,y][1]<200:
+                if pixels[x,y][2]>=100 and pixels[x,y][0]<170 and pixels[x,y][1]<170:
                     temp=pixels[x,y][1]
                     red = pixels[x,y][0]
                     green = pixels[x,y][2]
