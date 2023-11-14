@@ -17,26 +17,38 @@
                 id: theimg
                 hint_text: "Gimme a photo file. (debug: 2012)"
             Button:
-                text: "Enter"
+                text: "Load image"
                 on_release: root.answer_question(theimg.text)
+            TextInput:
+                id: xinput
+                hint_text: "X input for spot pixalation"
             Button:
-                text: "Pixal ruler (10 pixels per mark)"
+                text: "Spot pixalation"
+                on_release: root.pixalated_spot(xinput.text, yinput.text)
+            TextInput:
+                id: yinput
+                hint_text: "Y input for spot pixalation"
+            Button:
+                text: "Toggle pixal ruler (100pix/mark)"
                 on_release: root.pixal_ruler()
             Button:
                 text: "Blue to green"
                 on_release: root.bluetogreenimage()
             Button:
-                text: "Pointillism"
+                text: "Glitch"
+                on_release: root.glitching()
             Button:
                 text: "Sepia"
+                on_release: root.sepiaimage()
             Button:
                 text: "Invert"
+                on_release: root.invertion()
             Button:
                 text: "Horizontal flip"
+                on_release: root.mirror_vertical()
             Button:
                 text: "Vertical flip"
-            Button:
-                text: "Spot pixalate"
+                on_release: root.mirror_horizontal()
             
                 
                 
@@ -54,9 +66,9 @@
         orientation: "vertical"
         spacing: "5"
         Label:
-            text: "WRONG"
+            text: "Invalid image or invalid input value."
         Button:
-            text: "Skip -->"
+            text: "Back -->"
             on_release: root.next()
 
 <CorrectScreen>:
