@@ -248,8 +248,7 @@ class Question2Screen(Screen):
 class CorrectScreen(Screen):
     def next(self):
         self.manager.current = "question2"
-/Users/iggy/Desktop/PhotoEditor/fnafedit.jpg
-/Users/iggy/Desktop/PhotoEditor/nightskyedit.png
+
 class WrongScreen(Screen):
     def next(self):
         self.manager.current = "question2"
