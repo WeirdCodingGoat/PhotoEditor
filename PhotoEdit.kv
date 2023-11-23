@@ -21,16 +21,16 @@
                 on_release: root.answer_question(theimg.text)
             TextInput:
                 id: xinput
-                hint_text: "X input for spot pixalation"
+                hint_text: "(X,width) input for spot pixalation"
             Button:
                 text: "Spot pixalation"
                 on_release: root.pixalated_spot(xinput.text, yinput.text)
             TextInput:
                 id: yinput
-                hint_text: "Y input for spot pixalation"
+                hint_text: "(Y,height) input for spot pixalation"
             Button:
                 text: "Toggle pixal ruler (100pix/mark)"
-                on_release: root.pixal_ruler()
+                on_release: root.ruler_toggle()
             Button:
                 text: "Blue to green"
                 on_release: root.bluetogreenimage()
@@ -67,6 +67,8 @@
         spacing: "5"
         Label:
             text: "Invalid image or invalid input value."
+        Label:
+            text: "-format: x,length  (No Space), example: 100,100 \n-you can not put a number with decimals or a number greater than the image size."
         Button:
             text: "Back -->"
             on_release: root.next()

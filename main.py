@@ -29,7 +29,13 @@ class Question2Screen(Screen):
             self.manager.current = "correct"
         else:
             self.load_image(img)
-    
+            
+    def image_size(self):
+        img=Image.open(self.ids.image.source)
+        pixels = img.load()
+        width, height = img.size
+        return pixels, width
+        
     def image_prep(self):
         imgN=""
         # ACOMONDATING CODE FOR THE RULER FUNCTION:
@@ -42,10 +48,9 @@ class Question2Screen(Screen):
         #new_img=Image.open(imgN)
     
         pixels = img.load()
-        print(type(pixels))
         width, height = img.size
         
-        print("(",1,2,")","\nWidth:", width, "\nHeight:", height)
+        #print("(",1,2,")","\nWidth:", width, "\nHeight:", height)
         return pixels, width, height, name, img
             
             
@@ -54,13 +59,68 @@ class Question2Screen(Screen):
             
             
                     #     IMAGE EDITING FUNCTIONS BELOW vvvvvvvvvvvvvvvvvvvvvv
-           
     def pixal_ruler(self):
+        pixels, width, height, name, img= self.image_prep()
+        for x in range(img.size[0]):
+            for y in range(img.size[1]):
+                if x > img.size[0]//20: # X SPACE FOR CORNER
+                    if x % 100 == 0 and y < img.size[1]//15: # BIG MARKERS
+                        if pixels[x,y][0] > 255//2 and pixels[x,y][1] > 255//2 or pixels[x,y][0] > 255//2 and pixels[x,y][2] > 255//2 or pixels[x,y][1] > 255//2 and pixels[x,y][2] > 255//2:
+                            pixels[x,y] = (0,0,0)
+                            pixels[x-1,y] = (0,0,0)
+                            pixels[x+1,y] = (0,0,0)
+                        else:
+                            pixels[x,y] = (255,255,255)
+                            pixels[x-1,y] = (255,255,255)
+                            pixels[x+1,y] = (255,255,255)
+                        if "png" in self.ids.image.source:
+                            pixels[x,y] = (pixels[x,y][0],pixels[x,y][1],pixels[x,y][2],255)
+                            pixels[x-1,y] = (pixels[x,y][0],pixels[x-1,y][1],pixels[x-1,y][2],255)
+                            pixels[x+1,y] = (pixels[x,y][0],pixels[x+1,y][1],pixels[x+1,y][2],255)
+                    elif x % 10 == 0 and y < (img.size[1]/15)//2: # SMALL MARKERS
+                        if pixels[x,y][0] > 255//2 and pixels[x,y][1] > 255//2 or pixels[x,y][0] > 255//2 and pixels[x,y][2] > 255//2 or pixels[x,y][1] > 255//2 and pixels[x,y][2] > 255//2:
+                            pixels[x,y] = (0,0,0)
+                        else:
+                            pixels[x,y] = (255,255,255)
+                        if "png" in self.ids.image.source:
+                            pixels[x,y] = (pixels[x,y][0],pixels[x,y][1],pixels[x,y][2],255)
+        for x in range(img.size[0]):
+            for y in range(img.size[1]):
+                if y > img.size[1]//20: # Y SPACE FOR CORNER
+                    if y % 100 == 0 and x < img.size[0]//10: # BIG MARKERS
+                        if pixels[x,y][0] > 255//2 and pixels[x,y][1] > 255//2 or pixels[x,y][0] > 255//2 and pixels[x,y][2] > 255//2 or pixels[x,y][1] > 255//2 and pixels[x,y][2] > 255//2:
+                            pixels[x,y] = (0,0,0)
+                            pixels[x,y-1] = (0,0,0)
+                            pixels[x,y+1] = (0,0,0)
+                        else:
+                            pixels[x,y] = (255,255,255)
+                            pixels[x,y-1] = (255,255,255)
+                            pixels[x,y+1] = (255,255,255)
+                        if "png" in self.ids.image.source:
+                            pixels[x,y] = (pixels[x,y][0],pixels[x,y][1],pixels[x,y][2],255)
+                            pixels[x,y-1] = (pixels[x,y-1][0],pixels[x,y-1][1],pixels[x,y-1][2],255)
+                            pixels[x,y+1] = (pixels[x,y+1][0],pixels[x,y+1][1],pixels[x,y+1][2],255)
+                    elif y % 10 == 0 and x < (img.size[0]/15)//2: # SMALL MARKERS
+                        if pixels[x,y][0] > 255//2 and pixels[x,y][1] > 255//2 or pixels[x,y][0] > 255//2 and pixels[x,y][2] > 255//2 or pixels[x,y][1] > 255//2 and pixels[x,y][2] > 255//2:
+                            pixels[x,y] = (0,0,0)
+                        else:
+                            pixels[x,y] = (255,255,255)
+                        if "png" in self.ids.image.source:
+                            pixels[x,y] = (pixels[x,y][0],pixels[x,y][1],pixels[x,y][2],255)
+        imgN=self.ids.image.source[:-4]+"1"+self.ids.image.source[-4:]
+        img.save(imgN)
+        self.load_image(imgN)
+           
+    def ruler_toggle(self):
         imgN=""
-    
+        pixels, width, height, name, img= self.image_prep()
         if "1" in self.ids.image.source:
             imgN=self.ids.image.source[:-5]+self.ids.image.source[-4:]
             self.load_image(imgN)
+        else:
+            self.pixal_ruler()
+            
+
         
         
         
@@ -93,49 +153,59 @@ class Question2Screen(Screen):
       
     def glitching(self):  # Column swaper function
         pixels, width, height, name, img = self.image_prep()
-        print(name,self.ids.image.source)
         temp_pixel_list=[]
         temp_pixel=""
         times= 5
+        next_pix=0
         
+        def boundry_check(x):
+            more=0
+            less=0
+            if x + 1 >= img.size[0]:
+                more = x-2
+            else:
+                more = x+1
+            if x - 1 <= 0:
+                less = x+2
+            else:
+                less = x-1
+            return more, less
         for glitch in range(times):
-            x = random.randint(0,img.size[0]-1//2)
-  
+            x = random.randint(0,(img.size[0]-1)//2)
             #y = random.randint(0,img.size[1]-1)
-            def boundry_check(x,y):
-                more=0
-                less=0
-                if x + 1 >= img.size[0]:
-                    temp_pixel = pixels[x-2,y]
-                    more = x-2
-                else:
-                    temp_pixel = pixels[x+1,y]
-                    more = x+1
-                if x - 1 <= img.size[0]:
-                    temp_pixel = pixels[x+2,y]
-                    less = x+2
-                else:
-                    temp_pixel = pixels[x-1,y]
-                    less = x-1
-                return more, less
-            print("X = ",x)
+            right=boundry_check(x)[0]
+            left=boundry_check(x)[1]
             for y in range(img.size[1]-1):
-                temp_pixel = pixels[x,y]
-                temp_pixel_list.append(temp_pixel)
-                temp_pixel = pixels[boundry_check(x,y)[0],y]
-                temp_pixel_list.append(temp_pixel)
-                temp_pixel = pixels[boundry_check(x,y)[1],y]
-                temp_pixel_list.append(temp_pixel)
+                temp_pixel = pixels[x,y] #MIDLE
+                
+                if len(temp_pixel_list) <= x:
+                    while len(temp_pixel_list) <= x:
+                        temp_pixel_list.append([])
+                #print(len(temp_pixel_list)<x)
+                temp_pixel_list[x].append(temp_pixel)
+                
+                temp_pixel = pixels[right,y] # RIGHT SIDE
+                if len(temp_pixel_list) <= right:
+                    while len(temp_pixel_list) <= right:
+                        temp_pixel_list.append([])
+                temp_pixel_list[right].append(temp_pixel)
+                
+                temp_pixel = pixels[left,y] # LEFT SIDE
+                if len(temp_pixel_list) <= left:
+                    while len(temp_pixel_list) <= left:
+                        temp_pixel_list.append([])
+                temp_pixel_list[left].append(temp_pixel)
            
                 
             for y in range(img.size[1]-1):
                 pixels[x,y] = pixels[-1*x,y]
-                pixels[boundry_check(x,y)[0],y] = pixels[boundry_check(-1*x,y)[0],y]
-                pixels[boundry_check(x,y)[1],y] = pixels[boundry_check(-1*x,y)[1],y]
-    
-            for pixel in temp_pixel_list:
-                pixels[-(pixel[0]),y]= pixel
-        
+                pixels[right,y] = pixels[right*-1,y]
+                pixels[left,y] = pixels[left*-1,y]
+            
+            for y in range(img.size[1]-1):
+                pixels[-1*x,y] = temp_pixel_list[x][y]
+                pixels[-1*right,y] = temp_pixel_list[right][y]
+                pixels[-1*left,y] = temp_pixel_list[left][y]
         if "edit" in name:
             name= name[:-4]
         img.save(name+"edit"+self.ids.image.source[-4:])
@@ -149,8 +219,11 @@ class Question2Screen(Screen):
                 red = pixels[x,y][0]*0.393 + pixels[x,y][1]*0.769 + pixels[x,y][2]*0.189
                 green = pixels[x,y][1]*0.769 + pixels[x,y][0]*0.393 + pixels[x,y][2]*0.189
                 blue = pixels[x,y][2]*0.189 + pixels[x,y][0]*0.393 + pixels[x,y][1]*0.769
-                transparency = pixels[x,y][3]
-                pixels[x,y] = (int(red), int(green), int(blue),transparency)
+                if ".png" in self.ids.image.source:
+                    transparency = pixels[x,y][3]
+                    pixels[x,y] = (int(red), int(green), int(blue),transparency)
+                else:
+                    pixels[x,y] = (int(red), int(green), int(blue))
         if "edit" in name:
             name= name[:-4]
         img.save(name+"edit"+self.ids.image.source[-4:])
@@ -165,7 +238,7 @@ class Question2Screen(Screen):
                 red = 255 - pixels[x,y][0]
                 green = 255 - pixels[x,y][1]
                 blue = 255 - pixels[x,y][2]
-                transparency = 255 - pixels[x,y][3]
+                #transparency = 255 - pixels[x,y][3]
                 pixels[x,y] = (red, green, blue)
         if "edit" in name:
             name= name[:-4]
@@ -197,46 +270,55 @@ class Question2Screen(Screen):
             name= name[:-4]
         img.save(name+"edit"+self.ids.image.source[-4:])
         self.load_image(name+"edit"+self.ids.image.source[-4:])
-      
+        
+    
+                
     def pixalated_spot(self,x, y): # Pixalating a spot func
-        
-        def box( x, y, width, height, color):#, image, name):
-            for _y_pixels in range(width-1):
-                for _x_pixels in range(height-1):
-                    if x+_x_pixels < width and y+_y_pixels < height:
-                        pixels[x+_x_pixels,y+_y_pixels]= color
-        
         pixels, width, height, name, img = self.image_prep()
         numbers="0123456789"
+        x_length = 0
+        y_length = 0
         run = True
-        if x == "" or not x[0] in numbers:
+        
+        def box( x, y, width, height, color):# Individual pixel spots
+            #print(" W=",width,"H=",height)
+            for _y_pixels in range(width):
+                for _x_pixels in range(height):
+                    #print("",x+_x_pixels,y+_y_pixels)
+                    if x+_x_pixels < img.size[0] and y+_y_pixels < img.size[1]:
+                        pixels[x+_x_pixels,y+_y_pixels]= color
+                
+        
+        if x == "" or not x[0] in numbers or not "," in x or "." in x:
             run = False
             self.manager.current = "wrong"
         else:
-            x = int(x)
-            if x >= width or x < 1:
+            x_length = int(x[x.find(",")+1:])
+            x = int(x[:x.find(",")])
+            if x+x_length >= width or x < 0:
                 run = False
                 self.manager.current = "wrong"
-        if y == "" or not y[0] in numbers:
+        if y == "" or not y[0] in numbers or not "," in y or "." in y:
             run = False
             self.manager.current = "wrong"
         else:
-            y = height-int(y)
-            if y >= height or y < 1:
+            y_length = int(y[y.find(",")+1:])
+            y = int(y[:y.find(",")])
+            if y+y_length >= height or y < 0:
                 run = False
                 self.manager.current = "wrong"
+        _y_devided=y_length//8
+        _x_devided=x_length//8
         
-        _y_devided=height//8
-        _x_devided=width//8
-        
-        color=(255,255,255)
-        
+        color=(0,0,0) #25,100 70,100 Creeper.png
         if run == True:
-            for _y_pixels in range(0,width,_y_devided):
-                for _x_pixels in range(0,height,_x_devided):
-                    if x+_x_pixels < width and y+_y_pixels < height:
-                        color=pixels[_x_pixels+x,_y_pixels+y]
-                    box(_x_pixels+x, _y_pixels+y, _y_devided, _x_devided, color)
+            for _y_pixels in range(0,y_length,_y_devided):
+                for _x_pixels in range(0,x_length,_x_devided):
+                   # print(" 1y=",_y_pixels,"1x=",_x_pixels)
+                    color=pixels[_x_pixels+x,_y_pixels+y]
+                   # print(_x_pixels+x, _y_pixels+y, _y_devided, _x_devided, color)
+                    if x+_x_pixels < img.size[0] and y+_y_pixels < img.size[1]:
+                        box(_x_pixels+x, _y_pixels+y, _y_devided, _x_devided, color)
             if "edit" in name:
                 name= name[:-4]
             img.save(name+"edit"+self.ids.image.source[-4:])
